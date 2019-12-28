@@ -10,6 +10,9 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+include_directories(src/main/cpp/ffmpeg src/main/cpp/ffmpeg/include src/main/cpp/include )
+
+
 add_library( # Sets the name of the library.
              ffmpeg
 
@@ -27,7 +30,6 @@ add_library( # Sets the name of the library.
 
               )
 
-include_directories(src/main/cpp/include/)
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library

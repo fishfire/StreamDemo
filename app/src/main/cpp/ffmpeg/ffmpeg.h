@@ -30,7 +30,7 @@
 #endif
 
 #include "cmdutils.h"
-#include "../utilbase/utilbase.h"
+#include "../../utilbase/utilbase.h"
 #include "libavformat/avformat.h"
 #include "libavformat/avio.h"
 

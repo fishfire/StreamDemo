@@ -1,5 +1,6 @@
 package com.llvision.streamdemo.activity;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,12 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.llvision.streamdemo.R;
-import com.llvision.streamdemo.ffmpeg.ffmpegNative;
+import com.llvision.streamdemo.ffmpeg.FFmpegUtils;
+
+import java.util.List;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks  {
 
     private EditText edtCMD;
     private TextView tvMsg;
@@ -30,8 +37,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         edtCMD=findViewById(R.id.edt_cmd);
         tvMsg=findViewById(R.id.tv_msg);
-        String code=ffmpegNative.ffmpegCMD("test");
-        tvMsg.setText("The jni code:"+ffmpegNative.ffmpegInit(10));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -52,6 +57,30 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        methodRequiresTwoPermission();
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        methodRequiresTwoPermission();
+
+    }
+    public static final int RC_CAMERA_AND_LOCATION = 1;
+
+    @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
+    private void methodRequiresTwoPermission() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // Already have permission, do the thing
+            // ...
+            Toast.makeText(this, "获取了权限", Toast.LENGTH_SHORT).show();
+            tvMsg.setText(FFmpegUtils.ffmpegCMD("/sdcard/DCIM/Camera/1.mp4"));
+
+
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "t1",
+                    RC_CAMERA_AND_LOCATION, perms );
+
+        }
     }
 
     @Override
@@ -109,5 +138,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> list) {
+        // Some permissions have been granted
+        // ...
+        FFmpegUtils.ffmpegCMD("/sdcard/DCIM/Camera/1.mp4");
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> list) {
+        // Some permissions have been denied
+        // ...
     }
 }

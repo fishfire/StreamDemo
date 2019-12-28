@@ -6,7 +6,7 @@ package com.llvision.streamdemo.ffmpeg;
  * @Author: haijianming
  * @Time: 2018/11/21 下午3:53
  */
-public class ffmpegNative {
+public class FFmpegUtils {
     static {
         System.loadLibrary("ffmpeg");
     }
